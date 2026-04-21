@@ -1,0 +1,6 @@
+--require spec_helper
+--require rails_helper
+--color
+--format documentation
+--order random
+--fail-fast

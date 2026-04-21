@@ -11,10 +11,12 @@
 /.env*
 
 # Ignore all logfiles and tempfiles.
+/coverage/*
 /log/*
 /tmp/*
 !/log/.keep
 !/tmp/.keep
+/spec/examples.txt
 
 # Ignore pidfiles, but keep the directory.
 /tmp/pids/*

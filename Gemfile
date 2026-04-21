@@ -52,6 +52,20 @@ group :development, :test do
   gem "dotenv-rails"
 end
 
+group :test do
+  # Testing framework for Rails [https://github.com/rspec/rspec-rails]
+  gem "rspec-rails"
+
+  # Fixtures replacement with a straightforward DSL [https://github.com/thoughtbot/factory_bot]
+  gem "factory_bot_rails"
+
+  # Test coverage reporting [https://github.com/simplecov-ruby/simplecov]
+  gem "simplecov", require: false
+
+  # One-liner matchers for Rails/RSpec tests
+  gem "shoulda-matchers"
+end
+
 group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
