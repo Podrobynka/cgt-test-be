@@ -38,6 +38,10 @@ gem "thruster", require: false
 gem "red-parquet"
 gem "red-arrow"
 
+# Search engine for ActiveRecord models [https://github.com/ankane/searchkick]
+gem "searchkick"
+gem "elasticsearch"
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"

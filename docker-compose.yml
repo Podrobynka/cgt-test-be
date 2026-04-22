@@ -5,6 +5,29 @@ services:
       - ./tmp/db:/var/lib/postgresql/data
     environment:
       POSTGRES_PASSWORD: password
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:9.0.0
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+    volumes:
+      - ./tmp/elasticsearch:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c 'exec 3<>/dev/tcp/127.0.0.1/9200'"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
 
   web:
     build:
@@ -18,16 +41,29 @@ services:
       - "3000:3000"
     environment:
       DATABASE_URL: postgres://postgres:password@db:5432/postgres
+      ELASTICSEARCH_URL: http://elasticsearch:9200
       RAILS_ENV: development
       BUNDLE_WITHOUT: ""
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
 
   tester:
-    build: .
+    build:
+      context: .
+      args:
+        BUNDLE_WITHOUT: ""
     profiles: ["test"]
+    command: sh -c "bundle exec rails db:prepare"
     environment:
-      - RAILS_ENV=test
-      - DATABASE_URL=postgres://postgres:password@db:5432/cgt_test_be_test
+      RAILS_ENV: test
+      DATABASE_URL: postgres://postgres:password@db:5432/cgt_test_be_test
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+      BUNDLE_WITHOUT: ""
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
