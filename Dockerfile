@@ -16,15 +16,26 @@ WORKDIR /rails
 
 # Install base packages
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y curl libjemalloc2 postgresql-client && \
+    apt-get install -y ca-certificates lsb-release wget && \
+    wget https://apache.jfrog.io/artifactory/arrow/$(lsb_release --id --short | tr 'A-Z' 'a-z')/apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb && \
+    apt-get install -y ./apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb && \
+    apt-get update -qq && \
+    apt-get install --no-install-recommends -y \
+    curl \
+    libjemalloc2 \
+    postgresql-client \
+    libarrow-glib-dev \
+    libparquet-glib-dev \
+    libgirepository1.0 && \
     ln -s /usr/lib/$(uname -m)-linux-gnu/libjemalloc.so.2 /usr/local/lib/libjemalloc.so && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
 # Set production environment variables and enable jemalloc for reduced memory usage and latency.
+ARG BUNDLE_WITHOUT="development"
 ENV RAILS_ENV="production" \
     BUNDLE_DEPLOYMENT="1" \
     BUNDLE_PATH="/usr/local/bundle" \
-    BUNDLE_WITHOUT="development" \
+    BUNDLE_WITHOUT="${BUNDLE_WITHOUT}" \
     LD_PRELOAD="/usr/local/lib/libjemalloc.so"
 
 # Throw-away build stage to reduce size of final image
@@ -32,7 +43,21 @@ FROM base AS build
 
 # Install packages needed to build gems
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y build-essential git libpq-dev libyaml-dev pkg-config && \
+    apt-get install -y ca-certificates lsb-release wget && \
+    wget https://apache.jfrog.io/artifactory/arrow/$(lsb_release --id --short | tr 'A-Z' 'a-z')/apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb && \
+    apt-get install -y ./apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb && \
+    apt-get update -qq && \
+    apt-get install --no-install-recommends -y \
+    build-essential \
+    git \
+    libpq-dev \
+    libyaml-dev \
+    pkg-config \
+    libarrow-dev \
+    libparquet-dev \
+    gobject-introspection && \
+    (apt-get install --no-install-recommends -y libgirepository1.0-dev || \
+     apt-get install --no-install-recommends -y libgirepository-2.0-dev) && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
 # Install application gems
