@@ -22,3 +22,12 @@ services:
       BUNDLE_WITHOUT: ""
     depends_on:
       - db
+
+  tester:
+    build: .
+    profiles: ["test"]
+    environment:
+      - RAILS_ENV=test
+      - DATABASE_URL=postgres://postgres:password@db:5432/cgt_test_be_test
+    depends_on:
+      - db
