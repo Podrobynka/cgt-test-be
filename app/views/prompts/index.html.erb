@@ -5,22 +5,20 @@
     <h1 class="font-bold text-4xl">Prompts</h1>
   </div>
 
-  <%= form_with url: prompts_path, method: :get, local: true, class: "mb-6" do %>
-    <div class="flex gap-2 items-center">
-      <%= text_field_tag :q, @query, placeholder: "Search prompts...", class: "flex-1 border border-indigo-300 rounded px-3 py-2" %>
-      <%= submit_tag "Search", class: "px-4 py-2 bg-indigo-600 text-white rounded" %>
-      <% if @query.present? %>
-        <%= link_to "Clear", prompts_path, class: "px-4 py-2 border border-indigo-300 rounded" %>
-      <% end %>
-    </div>
-  <% end %>
+  <%= render "search_form" %>
 
   <div id="prompts" class="min-w-full space-y-5">
     <% if @prompts.any? %>
       <ul class="list-none divide-y divide-indigo-300">
-          <% @prompts.each do |prompt| %>
-            <%= render prompt %>
+        <% if @query.present? %>
+          <% @prompts.with_highlights.each do |prompt, highlights| %>
+            <%= render "prompt", prompt: highlights %>
           <% end %>
+        <% else %>
+          <% @prompts.each do |prompt| %>
+            <%= render "prompt", prompt: prompt %>
+          <% end %>
+        <% end %>
       </ul>
     <% else %>
       <p class="text-center my-10">No prompts found.</p>

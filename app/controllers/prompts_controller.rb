@@ -14,7 +14,8 @@ class PromptsController < ApplicationController
         load: true,
         order: { _score: :desc },
         limit: 10,
-        select: :body
+        select: :body,
+        highlight: { tag: '<mark class="bg-yellow-200 font-bold">' }
       )
     else
       Prompt.limit(10)

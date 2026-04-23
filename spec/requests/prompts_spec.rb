@@ -20,7 +20,7 @@ RSpec.describe "Prompts", type: :request, search: true do
       end
 
       it "renders all prompts" do
-        expect(subject.body.scan(/<li id="prompt_\d+"/).count).to eq(Prompt.count)
+        expect(subject.body.scan(/<li class="shadow-md p-2">/).count).to eq(Prompt.count)
       end
     end
 
@@ -32,7 +32,7 @@ RSpec.describe "Prompts", type: :request, search: true do
       end
 
       it "filters prompts via Searchkick" do
-        expect(subject.body.scan(/<li id="prompt_\d+"/).count).to eq(2)
+        expect(subject.body.scan(/<li class="shadow-md p-2">/).count).to eq(2)
       end
     end
 
@@ -48,7 +48,7 @@ RSpec.describe "Prompts", type: :request, search: true do
       let(:params) { { q: "" } }
 
       it "renders all prompts" do
-        expect(subject.body.scan(/<li id="prompt_\d+"/).count).to eq(Prompt.count)
+        expect(subject.body.scan(/<li class="shadow-md p-2">/).count).to eq(Prompt.count)
       end
     end
   end
