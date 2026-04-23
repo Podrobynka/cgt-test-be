@@ -10,14 +10,8 @@
   <div id="prompts" class="min-w-full space-y-5">
     <% if @prompts.any? %>
       <ul class="list-none divide-y divide-indigo-300">
-        <% if @query.present? %>
-          <% @prompts.with_highlights.each do |prompt, highlights| %>
-            <%= render "prompt", prompt: highlights %>
-          <% end %>
-        <% else %>
-          <% @prompts.each do |prompt| %>
-            <%= render "prompt", prompt: prompt %>
-          <% end %>
+        <% @prompts.with_highlights.each do |prompt, highlights| %>
+          <%= render prompt, highlights: highlights %>
         <% end %>
       </ul>
     <% else %>

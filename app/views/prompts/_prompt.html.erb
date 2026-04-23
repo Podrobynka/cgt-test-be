@@ -1,3 +1,7 @@
-<li class="shadow-md p-2">
-  <%== prompt[:body] %>
+<li id="<%= dom_id prompt %>" class="shadow-md p-2">
+  <% if highlights[:body].present? %>
+    <%== highlights[:body] %>
+  <% else %>
+    <%= prompt.body %>
+  <% end %>
 </li>
