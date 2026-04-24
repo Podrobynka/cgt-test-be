@@ -31,8 +31,28 @@ RSpec.describe "Prompts", type: :request, search: true do
         expect(subject).to have_http_status(:success)
       end
 
-      it "filters prompts via Searchkick" do
+      it "displays matching prompts" do
         expect(subject.body.scan(/<li id="prompt_\d+"/).count).to eq(2)
+      end
+    end
+
+    context "with search query and strategy parameter" do
+      let(:params) { { query: "portrait", strategy: :word_start } }
+
+      it "returns a successful response" do
+        expect(subject).to have_http_status(:success)
+      end
+
+      it "displays matching prompts" do
+        expect(subject.body.scan(/<li id="prompt_\d+"/).count).to eq(2)
+      end
+
+      context "with a partial word query at the middle of a word" do
+        let(:params) { { query: "ortraits", strategy: :word_start } }
+
+        it "displays no prompts" do
+          expect(subject.body).to include("No prompts found")
+        end
       end
     end
 

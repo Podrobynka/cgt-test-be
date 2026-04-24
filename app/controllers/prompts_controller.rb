@@ -11,6 +11,6 @@ class PromptsController < ApplicationController
   private
 
   def search_params
-    params.permit(:query, :page)
+    params.permit(:query, :page, :strategy)
   end
 end

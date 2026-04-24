@@ -3,8 +3,11 @@
 class Prompt < ApplicationRecord
   validates :body, presence: true
   searchkick searchable: [ :body ],
+             word: [ :body ],
+             word_start: [ :body ],
              word_middle: [ :body ],
-             highlight: [ :body ]
+             highlight: [ :body ],
+             deep_paging: true
 
   def search_data
     { body: body }
