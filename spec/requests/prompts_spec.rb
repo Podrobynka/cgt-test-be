@@ -25,7 +25,7 @@ RSpec.describe "Prompts", type: :request, search: true do
     end
 
     context "with search query" do
-      let(:params) { { q: "portrait" } }
+      let(:params) { { query: "portrait" } }
 
       it "returns a successful response" do
         expect(subject).to have_http_status(:success)
@@ -37,7 +37,7 @@ RSpec.describe "Prompts", type: :request, search: true do
     end
 
     context "with non-matching search query" do
-      let(:params) { { q: "nonexistent" } }
+      let(:params) { { query: "nonexistent" } }
 
       it "returns empty results for non-matching query" do
         expect(subject.body).to include("No prompts found")
@@ -45,10 +45,28 @@ RSpec.describe "Prompts", type: :request, search: true do
     end
 
     context "with empty query parameter" do
-      let(:params) { { q: "" } }
+      let(:params) { { query: "" } }
 
       it "renders all prompts" do
         expect(subject.body.scan(/<li id="prompt_\d+"/).count).to eq(Prompt.count)
+      end
+    end
+
+    context "with pagination" do
+      let(:params) { { page: 2 } }
+
+      before { stub_const("Prompts::Search::DEFAULT_LIMIT", 2) }
+
+      it "renders prompts for the second page" do
+        expect(subject.body.scan(/<li id="prompt_\d+"/).count).to eq(2)
+      end
+
+      it "renders current page number" do
+        expect(subject.body).to include("aria-current=\"page\">2<\/a>")
+      end
+
+      it "renders pagination controls" do
+        expect(subject.body).to include("Displaying items 3-4 of 4 in total")
       end
     end
   end

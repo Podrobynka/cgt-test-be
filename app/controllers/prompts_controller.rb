@@ -3,8 +3,14 @@
 class PromptsController < ApplicationController
   # GET /prompts or /prompts.json
   def index
-    @query = params[:q]
+    @query = search_params[:query]
+    @prompts = Prompts::Search.call(search_params)
+    @pagy = pagy(:searchkick, @prompts)
+  end
 
-    @prompts = Prompts::Search.call(query: @query)
+  private
+
+  def search_params
+    params.permit(:query, :page)
   end
 end

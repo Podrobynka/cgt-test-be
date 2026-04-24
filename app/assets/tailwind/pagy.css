@@ -1,0 +1,33 @@
+@layer components {
+  .pagy {
+    @apply flex flex-wrap items-center justify-start gap-1 text-sm font-medium;
+  }
+
+  .pagy a {
+    @apply block rounded-md border border-indigo-300 bg-white px-3 py-1 text-indigo-600;
+  }
+
+  .pagy a:hover {
+    @apply bg-indigo-50 text-indigo-700;
+  }
+
+  .pagy a[aria-current] {
+    @apply border-indigo-600 bg-indigo-600 text-white;
+  }
+
+  .pagy a[role="link"]:not([aria-current]) {
+    @apply cursor-default opacity-50;
+  }
+
+  .pagy [role="separator"] {
+    @apply px-2 py-1 text-gray-500;
+  }
+
+  .pagy label {
+    @apply inline-flex items-center gap-2 rounded-md border border-indigo-300 bg-white px-3 py-1 text-sm text-gray-700;
+  }
+
+  .pagy label input {
+    @apply w-16 rounded border border-gray-300 px-2 py-1 text-sm text-gray-900;
+  }
+}
