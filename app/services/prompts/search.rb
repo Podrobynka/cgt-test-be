@@ -19,7 +19,8 @@ module Prompts
     ].freeze
 
     def initialize(params = {})
-      @query = params[:query]&.strip
+      @query = params[:query]&.strip.presence || "*"
+      @exclude = params[:exclude]&.strip.presence
       @limit = params[:limit] || DEFAULT_LIMIT
       @page = params[:page] || DEFAULT_PAGE
       @strategy = params[:strategy]&.to_sym.presence_in(STRATEGIES) || STRATEGIES.first
@@ -27,19 +28,10 @@ module Prompts
     end
 
     def call
-      return base_query("*") unless @query.present?
-
-      base_query(@query, **query_options)
+      Prompt.search(@query, **query_options)
     end
 
     private
-
-    def base_query(query, **query_options)
-      Prompt.search(query, **query_options)
-            .select(:body)
-            .page(@page)
-            .per_page(@limit)
-    end
 
     def query_options
       {
@@ -47,7 +39,11 @@ module Prompts
         misspellings: { below: MISSPELLINGS_BELOW_POINT },
         highlight: HIGHLIGHT_OPTIONS,
         order: { _score: :desc },
-        operator: @operator
+        operator: @operator,
+        exclude: @exclude,
+        select: :body,
+        page: @page,
+        per_page: @limit
       }.compact
     end
   end

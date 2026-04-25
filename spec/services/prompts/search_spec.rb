@@ -2,9 +2,9 @@
 
 RSpec.describe Prompts::Search, search: true do
   describe "#call" do
-    let!(:prompt1) { create(:prompt, body: SEED_PROMPT_BODIES[0]) }
-    let!(:prompt2) { create(:prompt, body: SEED_PROMPT_BODIES[1]) }
-    let!(:prompt3) { create(:prompt, body: SEED_PROMPT_BODIES[2]) }
+    SEED_PROMPT_BODIES.first(3).each_with_index do |body, index|
+      let!("prompt#{index + 1}".to_sym) { create(:prompt, body: body) }
+    end
 
     before { Prompt.reindex }
 
@@ -25,7 +25,7 @@ RSpec.describe Prompts::Search, search: true do
         let(:query) { "portrait" }
 
         it "returns almost matching prompt" do
-        expect(subject.map(&:id)).to contain_exactly(prompt2.id)
+          expect(subject.map(&:id)).to contain_exactly(prompt2.id)
         end
       end
 
@@ -92,13 +92,24 @@ RSpec.describe Prompts::Search, search: true do
           end
         end
       end
+
+      context "with exclude parameter" do
+        let(:query) { "style" }
+        let(:exclude) { "style of" }
+
+        subject { described_class.call(query: query, exclude: exclude) }
+
+        it "returns prompts matching the query except prompts with the excluded word" do
+          expect(subject.map(&:id)).to contain_exactly(prompt2.id)
+        end
+      end
     end
 
     context "with an empty search query" do
       let(:query) { "" }
 
       it "returns all prompts" do
-        expect(subject.map(&:id)).to contain_exactly(prompt3.id, prompt1.id, prompt2.id)
+        expect(subject.map(&:id)).to contain_exactly(*Prompt.pluck(:id))
       end
     end
 
@@ -106,7 +117,7 @@ RSpec.describe Prompts::Search, search: true do
       let(:query) { "*" }
 
       it "returns all prompts" do
-        expect(subject.map(&:id)).to contain_exactly(prompt1.id, prompt2.id, prompt3.id)
+        expect(subject.map(&:id)).to contain_exactly(*Prompt.pluck(:id))
       end
     end
   end

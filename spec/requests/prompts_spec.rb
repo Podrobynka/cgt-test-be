@@ -66,6 +66,18 @@ RSpec.describe "Prompts", type: :request, search: true do
           expect(subject.body.scan(/<li id="prompt_\d+"/).count).to eq(2)
         end
       end
+
+      context "and exclude parameter" do
+        let(:params) { { query: "style", exclude: "style of" } }
+
+        it "returns a successful response" do
+          expect(subject).to have_http_status(:success)
+        end
+
+        it "displays matching prompts excluding the specified term" do
+          expect(subject.body.scan(/<li id="prompt_\d+"/).count).to eq(1)
+        end
+      end
     end
 
     context "with non-matching search query" do
