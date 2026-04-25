@@ -12,42 +12,43 @@ RSpec.describe "Prompts", type: :request, search: true do
       response
     end
 
-    context "without search query" do
-      let(:params) { {} }
-
+    shared_examples "a successful response" do
       it "returns a successful response" do
         expect(subject).to have_http_status(:success)
       end
+    end
 
-      it "renders all prompts" do
-        expect(subject.body.scan(/<li id="prompt_\d+"/).count).to eq(Prompt.count)
+    shared_examples "a response with required prompts" do
+      it "renders correct number of prompts" do
+        expect(subject.body.scan(/<li id="prompt_\d+"/).count).to eq(expected_count)
       end
+    end
+
+    context "without search query" do
+      let(:params) { {} }
+      let(:expected_count) { Prompt.count }
+
+      it_behaves_like "a successful response"
+      it_behaves_like "a response with required prompts"
     end
 
     context "with search query" do
       let(:params) { { query: "portrait" } }
+      let(:expected_count) { 2 }
 
-      it "returns a successful response" do
-        expect(subject).to have_http_status(:success)
-      end
-
-      it "displays matching prompts" do
-        expect(subject.body.scan(/<li id="prompt_\d+"/).count).to eq(2)
-      end
+      it_behaves_like "a successful response"
+      it_behaves_like "a response with required prompts"
 
       context "and strategy parameter" do
         let(:params) { { query: "portrait", strategy: :word_start } }
 
-        it "returns a successful response" do
-          expect(subject).to have_http_status(:success)
-        end
-
-        it "displays matching prompts" do
-          expect(subject.body.scan(/<li id="prompt_\d+"/).count).to eq(2)
-        end
+        it_behaves_like "a successful response"
+        it_behaves_like "a response with required prompts"
 
         context "with a partial word query at the middle of a word" do
           let(:params) { { query: "ortraits", strategy: :word_start } }
+
+          it_behaves_like "a successful response"
 
           it "displays no prompts" do
             expect(subject.body).to include("No prompts found")
@@ -58,30 +59,23 @@ RSpec.describe "Prompts", type: :request, search: true do
       context "and operator parameter" do
         let(:params) { { query: "colorful factory", operator: :or } }
 
-        it "returns a successful response" do
-          expect(subject).to have_http_status(:success)
-        end
-
-        it "displays matching prompts" do
-          expect(subject.body.scan(/<li id="prompt_\d+"/).count).to eq(2)
-        end
+        it_behaves_like "a successful response"
+        it_behaves_like "a response with required prompts"
       end
 
       context "and exclude parameter" do
         let(:params) { { query: "style", exclude: "style of" } }
+        let(:expected_count) { 1 }
 
-        it "returns a successful response" do
-          expect(subject).to have_http_status(:success)
-        end
-
-        it "displays matching prompts excluding the specified term" do
-          expect(subject.body.scan(/<li id="prompt_\d+"/).count).to eq(1)
-        end
+        it_behaves_like "a successful response"
+        it_behaves_like "a response with required prompts"
       end
     end
 
     context "with non-matching search query" do
       let(:params) { { query: "nonexistent" } }
+
+      it_behaves_like "a successful response"
 
       it "returns empty results for non-matching query" do
         expect(subject.body).to include("No prompts found")
@@ -90,20 +84,20 @@ RSpec.describe "Prompts", type: :request, search: true do
 
     context "with empty query parameter" do
       let(:params) { { query: "" } }
+      let(:expected_count) { Prompt.count }
 
-      it "renders all prompts" do
-        expect(subject.body.scan(/<li id="prompt_\d+"/).count).to eq(Prompt.count)
-      end
+      it_behaves_like "a successful response"
+      it_behaves_like "a response with required prompts"
     end
 
     context "with pagination" do
       let(:params) { { page: 2 } }
+      let(:expected_count) { 2 }
 
       before { stub_const("Prompts::Search::DEFAULT_LIMIT", 2) }
 
-      it "renders prompts for the second page" do
-        expect(subject.body.scan(/<li id="prompt_\d+"/).count).to eq(2)
-      end
+      it_behaves_like "a successful response"
+      it_behaves_like "a response with required prompts"
 
       it "renders current page number" do
         expect(subject.body).to include("aria-current=\"page\">2<\/a>")
