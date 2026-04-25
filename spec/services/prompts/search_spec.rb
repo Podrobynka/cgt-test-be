@@ -76,6 +76,22 @@ RSpec.describe Prompts::Search, search: true do
           end
         end
       end
+
+      context "with multiple words" do
+        let(:query) { "colorful factory" }
+
+        it "returns empty array" do
+          expect(subject.map(&:id)).to be_empty
+        end
+
+        context "and 'or' operator" do
+          subject { described_class.call(query: query, operator: :or) }
+
+          it "returns prompts matching any of the words" do
+            expect(subject.map(&:id)).to contain_exactly(prompt1.id, prompt3.id)
+          end
+        end
+      end
     end
 
     context "with an empty search query" do

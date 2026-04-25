@@ -5,7 +5,7 @@ module Prompts
     DEFAULT_LIMIT = 10
     DEFAULT_PAGE = 1
     MISSPELLINGS_BELOW_POINT = 3
-    DEFAULT_MATCH = :word_middle
+    OPERATORS = %i[and or].freeze
 
     HIGHLIGHT_OPTIONS = {
       tag: '<mark class="bg-yellow-200 font-bold">',
@@ -13,16 +13,17 @@ module Prompts
     }.freeze
 
     STRATEGIES = %i[
-      word
-      word_start
       word_middle
+      word_start
+      word
     ].freeze
 
     def initialize(params = {})
       @query = params[:query]&.strip
       @limit = params[:limit] || DEFAULT_LIMIT
       @page = params[:page] || DEFAULT_PAGE
-      @strategy = params[:strategy]&.to_sym.presence_in(STRATEGIES) || DEFAULT_MATCH
+      @strategy = params[:strategy]&.to_sym.presence_in(STRATEGIES) || STRATEGIES.first
+      @operator = params[:operator]&.to_sym.presence_in(OPERATORS) || OPERATORS.first
     end
 
     def call
@@ -45,7 +46,8 @@ module Prompts
         match: @strategy,
         misspellings: { below: MISSPELLINGS_BELOW_POINT },
         highlight: HIGHLIGHT_OPTIONS,
-        order: { _score: :desc }
+        order: { _score: :desc },
+        operator: @operator
       }.compact
     end
   end

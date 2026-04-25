@@ -1,6 +1,7 @@
 <%= form_with url: prompts_path, method: :get, local: true, class: "mb-6" do %>
   <div class="flex gap-2 items-center">
     <%= text_field_tag :query, @query, placeholder: "Search prompts...", class: "flex-1 border border-indigo-300 rounded px-3 py-2" %>
+    <%= select_tag :operator, options_for_select([["All words", :and], ["Any word", :or]], params[:operator]), class: "h-10 border border-indigo-300 rounded px-3 py-2 bg-white" %>
     <%= select_tag :strategy, options_for_select([["Word Middle", :word_middle], ["Word Start", :word_start], ["Word", :word]], params[:strategy]), class: "h-10 border border-indigo-300 rounded px-3 py-2 bg-white" %>
     <%= submit_tag "Search", class: "px-4 py-2 bg-indigo-600 text-white rounded" %>
     <% if @query.present? %>
