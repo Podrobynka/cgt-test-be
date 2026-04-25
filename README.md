@@ -1,39 +1,106 @@
-# README
+# CGT Test Backend
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Rails 8 application for searching prompts.
 
-Things you may want to cover:
+The app provides:
 
-* Ruby version
-  4.0.2
+- A paginated prompt list view.
+- Full-text search powered by Searchkick + Elasticsearch.
+- Search tuning via match strategy and operator query parameters.
 
-* System dependencies
-  PostgreSQL. Versions 9.5 and up
+The app is running on https://zoommix.me/
 
-* Configuration
-  Add ENV variables:
-  ```
-    DB_USERNAME
-    DB_PASSWORD
-  ```
-  
-  Run the following command
-  ```
-  $ bundle install
-  ```
+## Tech Stack
 
-* Database creation
-  Run the following commands to create and setup the database.
-  ```
-  $ bundle exec rails db:create
-  $ bundle exec rails db:migrate
-  ```
+- Ruby 4.0.2
+- Rails 8.1
+- Searchkick
+- Pagy
+- RSpec
 
-* How to run the test suite
+## System dependencies
 
-* Services (job queues, cache servers, search engines, etc.)
+- PostgreSQL 9.5+
+- Elasticsearch 9
 
-* Deployment instructions
+## Running the App (Docker)
 
-* ...
+1. Start services:
+
+```bash
+docker compose up --build
+```
+
+This starts:
+
+- `db` (PostgreSQL)
+- `elasticsearch`
+- `web` (Rails)
+
+2. Open the app:
+
+```text
+http://localhost:3000
+```
+
+## Running the App (local)
+
+### Prerequisites
+
+- Ruby 4.0.2
+- PostgreSQL running locally
+- Elasticsearch running locally at `http://localhost:9200`
+
+### Environment
+
+Set these variables as needed:
+
+- `DB_HOST`
+- `DB_USERNAME`
+- `DB_PASSWORD`
+- `ELASTICSEARCH_URL`
+
+### Setup
+
+```bash
+bundle install
+bundle exec rails db:create db:migrate
+```
+
+To build Tailwind CSS:
+
+```bash
+bundle exec rails tailwindcss:build
+```
+
+### Start
+
+```bash
+bin/dev
+```
+
+## Import Dataset
+
+Import prompts from Parquet (default file path is `lib/data/train.parquet`):
+
+```bash
+bundle exec rake import:dataset
+```
+or
+```bash
+docker compose exec web bin/rails import:dataset
+```
+
+Custom file path and batch size:
+
+```bash
+bundle exec rake "import:dataset[/relative/path.parquet,2000]"
+```
+
+The task inserts prompt bodies and reindexes Searchkick when finished.
+
+## Test Suite
+
+```bash
+bundle exec rspec
+```
