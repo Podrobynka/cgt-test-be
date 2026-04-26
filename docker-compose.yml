@@ -1,6 +1,7 @@
 services:
   db:
     image: postgres:15-alpine
+    restart: always
     volumes:
       - ./tmp/db:/var/lib/postgresql/data
     environment:
@@ -14,6 +15,7 @@ services:
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:9.0.0
+    restart: always
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=false
@@ -34,6 +36,7 @@ services:
       context: .
       args:
         BUNDLE_WITHOUT: ""
+    restart: always
     command: sh -c "bundle exec rails db:migrate && bundle exec rails s -p 3000 -b '0.0.0.0'"
     volumes:
       - .:/rails
@@ -55,6 +58,7 @@ services:
       context: .
       args:
         BUNDLE_WITHOUT: ""
+    restart: always
     command: sh -c "bundle exec rails tailwindcss:watch"
     volumes:
       - .:/rails
@@ -62,21 +66,3 @@ services:
       RAILS_ENV: development
       BUNDLE_WITHOUT: ""
       TAILWINDCSS_POLL: "true"
-
-  tester:
-    build:
-      context: .
-      args:
-        BUNDLE_WITHOUT: ""
-    profiles: ["test"]
-    command: sh -c "bundle exec rails db:prepare"
-    environment:
-      RAILS_ENV: test
-      DATABASE_URL: postgres://postgres:password@db:5432/cgt_test_be_test
-      ELASTICSEARCH_URL: http://elasticsearch:9200
-      BUNDLE_WITHOUT: ""
-    depends_on:
-      db:
-        condition: service_healthy
-      elasticsearch:
-        condition: service_healthy
