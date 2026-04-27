@@ -299,14 +299,14 @@ GEM
       erb
       psych (>= 4.0.0)
       tsort
-    red-arrow (23.0.1)
+    red-arrow (24.0.0)
       bigdecimal (>= 3.1.0)
       csv
-      extpp (>= 0.1.1)
+      extpp (>= 0.1.2)
       gio2 (>= 4.2.3)
       pkg-config
-    red-parquet (23.0.1)
-      red-arrow (= 23.0.1)
+    red-parquet (24.0.0)
+      red-arrow (= 24.0.0)
     regexp_parser (2.12.0)
     reline (0.6.3)
       io-console (~> 0.5)
@@ -619,8 +619,8 @@ CHECKSUMS
   rake (13.4.2) sha256=cb825b2bd5f1f8e91ca37bddb4b9aaf345551b4731da62949be002fa89283701
   rbs (3.10.4) sha256=b17d7c4be4bb31a11a3b529830f0aa206a807ca42f2e7921a3027dfc6b7e5ce8
   rdoc (7.2.0) sha256=8650f76cd4009c3b54955eb5d7e3a075c60a57276766ebf36f9085e8c9f23192
-  red-arrow (23.0.1) sha256=00693637b42ae62629018e128b791d939e7b36d83ec771d347432644d99b50bc
-  red-parquet (23.0.1) sha256=4f60b2dc36f2e82dc779ba1ccb7d5f3aeb0764bbe6273882d8bce32f379771f2
+  red-arrow (24.0.0) sha256=7cb2f1e7a72a3409f0ef0bfd589939ff60fc710b2961658d76afd9579bc0744b
+  red-parquet (24.0.0) sha256=1103ee608351003273792ad2871897832ece29c55cdb497251ab9d6915bfca52
   regexp_parser (2.12.0) sha256=35a916a1d63190ab5c9009457136ae5f3c0c7512d60291d0d1378ba18ce08ebb
   reline (0.6.3) sha256=1198b04973565b36ec0f11542ab3f5cfeeec34823f4e54cebde90968092b1835
   reverse_markdown (3.0.2) sha256=818ebb92ce39dbb1a291690dd1ec9a6d62530d4725296b17e9c8f668f9a5b8af
